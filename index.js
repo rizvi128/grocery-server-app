@@ -62,17 +62,16 @@ client.connect(err => {
 
 
   app.get('/product/:id', (req, res) => {
-    console.log(req.params.id)
+    console.log('hello 65',req.params.id)
     productCollection.find({ _id:ObjectId(req.params.id)})
         .toArray((documents) => {
             res.send(documents)
-            console.log(documents)
+            console.log( 'hello i m 69',documents)
         })
 })
 
   app.delete('/delete/:id', (req, res) => {
     const id = ObjectId(req.params.id);
-    console.log('i am id' ,id);
     productCollection.deleteOne({ _id: id })
         .then(result => {
             res.send(result.deletedCount > 0);
@@ -94,7 +93,7 @@ app.patch('/editProduct/:id', (req, res) => {
       })
       .then(result => {
           res.send(result.modifiedCount > 0);
-          console.log(result)
+         
       })
 })
 
