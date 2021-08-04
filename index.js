@@ -16,91 +16,71 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nzfaw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-
-
-
-
-
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
 client.connect(err => {
-
   const productCollection = client.db("grocery").collection("groceryProduct");
-
-
+  const ordersCollection = client.db("grocery").collection("ordersProduct");
 
   app.get('/products', (req, res) => {
-
     productCollection.find()
       .toArray((err, products) => {
         res.send(products)
-        
+
       })
-
   })
-
-
-
-
-
 
   app.post('/addProduct', (req, res) => {
     const newProduct = req.body;
-    
     productCollection.insertOne(newProduct)
       .then(result => {
-        
+
         res.send(result.insertedCount > 0)
       })
   })
 
-
-
   app.get('/product/:id', (req, res) => {
-    console.log('hello 65',req.params.id)
-    productCollection.find({ _id:ObjectId(req.params.id)})
-        .toArray((documents) => {
-            res.send(documents)
-            console.log( 'hello i m 69',documents)
-        })
-})
+    console.log('hello 65', req.params.id)
+    productCollection.find({ _id: ObjectId(req.params.id) })
+      .toArray((documents) => {
+        res.send(documents)
+        console.log('hello i m 69', documents)
+      })
+  })
 
   app.delete('/delete/:id', (req, res) => {
     const id = ObjectId(req.params.id);
     productCollection.deleteOne({ _id: id })
-        .then(result => {
-            res.send(result.deletedCount > 0);
-        })
-})
+      .then(result => {
+        res.send(result.deletedCount > 0);
+      })
+  })
 
-
-
-
-
-app.patch('/editProduct/:id', (req, res) => {
-  console.log(req.params.id)
-  productCollection.updateOne({ _id: ObjectId(req.params.id) },
+  app.patch('/editProduct/:id', (req, res) => {
+    console.log(req.params.id)
+    productCollection.updateOne({ _id: ObjectId(req.params.id) },
       {
-          $set: {
-              name: req.body.name,
-              price:req.body.price,
-          }
+        $set: {
+          name: req.body.name,
+          price: req.body.price,
+        }
       })
       .then(result => {
-          res.send(result.modifiedCount > 0);
-         
+        res.send(result.modifiedCount > 0);
       })
-})
-
- 
+  })
 
 
-
+  app.post('/addOrders', (req, res) => {
+    const newOrder = req.body;
+    ordersCollection.insertOne(newOrder)
+      .then(result => {
+        res.send(result.insertedCount > 0)
+      })
+  })
   //client.close();
 });
 
